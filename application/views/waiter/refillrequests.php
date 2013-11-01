@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Welcome to McDowel's</title>
+		<?php echo $dependencies; ?>
+		<script type="text/javascript">
+			function acceptRequest(event){
+				request = $(event.target);
+				requestid = request.attr('requestid');
+
+				if (!request.hasClass('disabled')){
+					$.ajax({
+						type: "POST",
+						url: "<?php echo site_url('waiter/helprequests/accept'); ?>",
+						data: "id=" + requestid,
+						success: function(data, textStatus){
+							request.addClass('disabled');
+							request.html("Accepted");
+							request.parent().parent().removeClass('pending');
+						}
+					});
+				}
+			}
+
+			function resolveRequest(event){
+				request = $(event.target);
+				requestid = request.attr('requestid');
+
+				if (!request.hasClass('disabled')){
+					$.ajax({
+						type: "POST",
+						url: "<?php echo site_url('waiter/helprequests/resolve'); ?>",
+						data: "id=" + requestid,
+						success: function(data, textStatus){
+							request.addClass('disabled');
+							request.html("Resolved");
+							request.parent().parent().removeClass('pending');
+						}
+					});
+				}
+			}
+		</script>
+	</head>
+
+	<body>
+		<?php echo $header; ?>
+		<div class="container-fluid" style="margin-top:120px;">
+			<div class="row-fluid">
+				<div class="span12 outer-frame rounded-6px">
+					<div class="whitebg">
+						<div class="boxheading toprounded-4px">
+							Drink Refill Requests
+						</div>
+						<div class="singlecontent padding-10px">
+							<div class="tabbable">
+								<ul class="nav nav-tabs">
+									<li class="active"><a href="#pending" data-toggle="tab">Pending</a></li>
+									<li><a href="#accepted" data-toggle="tab">Accepted</a></li>
+								</ul>
+								<div class="tab-content">
+									<div class="tab-content">
+										<div class="tab-pane active" id="pending">
+											<?php if (empty($unacceptedrefills)): ?>
+												<div class="alert alert-danger">
+													There are no pending drink refill requests at this time.
+												</div>
+											<?php endif; ?>
+											<?php foreach ($unacceptedrefills as $unaccepted): ?>
+												<div class="kitchenorder pending">
+													<div class="ordereditems pull-left" style="">
+														<div class="tablenumber rounded-4px pull-left">
+															<?php echo $unaccepted->tablenumber; ?>
+														</div>
+														<p><b>Table <?php echo $unaccepted->tablenumber; ?></b> requested a drink refill.<br/>
+															<b>Drink Type:</b> <?php echo $unaccepted->getDrinkType()->name; ?></p>
+													</div>
+													<div class="orderaction pull-right">
+														<a href="#" requestid="<?php echo $unaccepted->id; ?>" onclick="acceptRequest(event)" class="btn btn-large"><i class="icon-eye-open"></i> Accept</a>
+													</div>
+												</div>
+											<?php endforeach; ?>
+										</div>
+										<div class="tab-pane" id="accepted">
+											<?php if (empty($acceptedrefills)): ?>
+												<div class="alert alert-danger">
+													There are no unresolved drink refill requests at this time.
+												</div>
+											<?php endif; ?>
+											<?php foreach ($acceptedrefills as $accepted): ?>
+												<div class="kitchenorder pending">
+													<div class="ordereditems pull-left" style="">
+														<div class="tablenumber rounded-4px pull-left">
+															<?php echo $accepted->tablenumber; ?>
+														</div>
+														<p><b>Table <?php echo $accepted->tablenumber; ?></b> requested a drink refill.<br/>
+															<b>Drink Type:</b> <?php echo $accepted->getDrinkType()->name; ?></p>
+													</div>
+													<div class="orderaction pull-right">
+														<a href="#" requestid="<?php echo $accepted->id; ?>" onclick="resolveRequest(event)" class="btn btn-large"><i class="icon-ok"></i> Resolved</a>
+													</div>
+												</div>
+											<?php endforeach; ?>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br />
+	</body>
+</html>

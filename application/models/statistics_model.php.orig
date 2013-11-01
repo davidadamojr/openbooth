@@ -1,0 +1,44 @@
+<?php
+class statistics_model extends CI_Model{
+    public function __construct(){
+        //$this->load->database();
+    }
+    public function compensations_per_day(){
+
+        $query=$this->db->query(
+                     "SELECT count(comp) as number, DATE_FORMAT(timestamp,\"%Y-%m-%d\") as time_constraint 
+                    FROM orderitem 
+                    GROUP BY time_constraint");
+        return $query->result();
+    }
+
+    public function  items_compensated_per_waiter(){
+        $query = $this->db->query(
+               "SELECT COUNT(*) FROM 
+            orderitem 
+            JOIN  Staff ON staff.id = orderitem.comp
+            GROUP BY comp"
+                );
+        return $query->result();
+    }
+
+    public function gross_revenue(){
+        $query = $this->db->query(
+                "SELECT SUM( amount ) ,COUNT( amount )  DATE_FORMAT( TIMESTAMP,  \"%Y-%m-%d\" ) AS time_constraint
+                FROM payment
+                GROUP BY time_constraint"
+                );
+        return $query->result();
+    }
+    
+    public function frequency_hourly(){
+        $query = $this->db->query(
+           "SELECT COUNT( menuid ) , menuitem.name , DATE_FORMAT( TIMESTAMP,  \"%Y-%m-%d-%h\" ) AS time_constraint
+            FROM orderitem
+            JOIN menuitem ON menuitem.id = orderitem.menuid
+            GROUP BY time_constraint,menuitem.id"    
+                );
+        return $query->result();        
+    }
+}
+?>

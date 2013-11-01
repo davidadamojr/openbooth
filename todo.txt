@@ -1,0 +1,9 @@
+- in table setup, check to ensure tables actually exist
+- access privileges
+- search session variable for whether or not game has already been played
+- sort orders (kitchen) by id DESC
+- set table device status to unused when customer exits
+- everytime customer goes to menu screen, check to see if customer has pending orders to know whether to display the alert for order status
+- get only menu items whose status is available
+- check acccess rights for every page
+- prevent duplicate despatch notifications
