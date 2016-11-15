@@ -31,7 +31,12 @@
 class CI_DB_driver {
 
 	var $username;
-	var $password;
+	var $password; 
+	/* 
+	Password comming Empty You can use $passname ( use echo $this->$password; for check )
+	You need to change system/database/drivers/mysql_driver.php line: 73
+	return @mysql_connect($this->hostname, $this->username, $this->passname, TRUE); i use this one.
+	*/
 	var $hostname;
 	var $database;
 	var $dbdriver		= 'mysql';
@@ -113,7 +118,7 @@ class CI_DB_driver {
 
 		// Connect to the database and set the connection ID
 		$this->conn_id = ($this->pconnect == FALSE) ? $this->db_connect() : $this->db_pconnect();
-
+		// You need to change $this->pconnect == FALSE to $this->pconnect == 1 you can check echo $this->pconnect;
 		// No connection resource?  Throw an error
 		if ( ! $this->conn_id)
 		{
